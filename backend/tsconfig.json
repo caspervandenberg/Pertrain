@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    // Node's own resolver, including "imports"/"exports" in package.json
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "target": "es2023",
+    // Required for running .ts directly through Node
+    "erasableSyntaxOnly": true,
+    "verbatimModuleSyntax": true,
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    // Type checking
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "types": [
+      "node"
+    ],
+    "skipLibCheck": true
+  },
+  "include": [
+    "src/**/*.ts",
+    "scripts/**/*.ts"
+  ],
+  "exclude": [
+    "**/node_modules"
+  ]
+}

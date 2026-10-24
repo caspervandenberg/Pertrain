@@ -1,0 +1,32 @@
+{
+  "name": "pertrain-backend",
+  "version": "0.1.0",
+  "description": "",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "node src/index.ts",
+    "db:reset": "node scripts/reset-db.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/caspervandenberg/Pertrain.git"
+  },
+  "keywords": [],
+  "author": "Casper van den Berg <cavdb08@gmail.com> (https://github.com/caspervandenberg)",
+  "license": "MIT",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/caspervandenberg/Pertrain/issues"
+  },
+  "homepage": "https://github.com/caspervandenberg/Pertrain#readme",
+  "dependencies": {
+    "bcrypt": "6.0.0",
+    "express": "5.3.0"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "6.0.0",
+    "@types/express": "5.0.6",
+    "@types/node": "26.6.5"
+  }
+}

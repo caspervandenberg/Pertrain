@@ -1,0 +1,205 @@
+@host = http://localhost:3000
+@trainNumber = 9494
+
+# Run "Create a user" or "Log in" first: they store {{userId}} and {{token}} for the requests below.
+
+### ============ Users ============
+
+### Create a user
+POST {{host}}/users
+Content-Type: application/json
+
+{
+  "displayName": "Casper van den Berg",
+  "email": "cavdb08@gmail.com",
+  "password": "wachtwoord1"
+}
+
+> {%
+    if (response.status === 201) client.global.set("userId", response.body.id);
+%}
+
+### Create a second user (stored as {{otherUserId}})
+POST {{host}}/users
+Content-Type: application/json
+
+{
+  "displayName": "Bas Luttik",
+  "email": "bas.luttik@tue.nl",
+  "password": "wachtwoord2"
+}
+
+> {%
+    if (response.status === 201) client.global.set("otherUserId", response.body.id);
+%}
+
+### Create a user with a random email (always succeeds)
+POST {{host}}/users
+Content-Type: application/json
+
+{
+  "displayName": "Random {{$random.alphabetic(5)}}",
+  "email": "{{$random.alphanumeric(8)}}@example.com",
+  "password": "wachtwoord3"
+}
+
+> {%
+    if (response.status === 201) client.global.set("userId", response.body.id);
+%}
+
+### Get a user
+GET {{host}}/users/{{userId}}
+
+### Get the second user
+GET {{host}}/users/{{otherUserId}}
+
+### Delete a user
+DELETE {{host}}/users/{{userId}}
+
+### ============ Auth ============
+
+### Log in
+POST {{host}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "bas.luttik@tue.nl",
+  "password": "wachtwoord2"
+}
+
+> {%
+    client.global.set("token", response.body.token);
+    client.global.set("userId", response.body.user.id);
+%}
+
+### Log in as the second user
+POST {{host}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "cavdb08@gmail.com",
+  "password": "wachtwoord1"
+}
+
+> {%
+    client.global.set("token", response.body.token);
+    client.global.set("otherUserId", response.body.user.id);
+%}
+
+### ============ Rides ============
+
+### Log a ride
+POST {{host}}/rides
+Content-Type: application/json
+
+{
+  "userId": "{{userId}}",
+  "trainNumber": {{trainNumber}}
+}
+
+> {%
+    if (response.status === 201) client.global.set("rideId", response.body.id);
+%}
+
+### Log a ride for the second user
+POST {{host}}/rides
+Content-Type: application/json
+
+{
+  "userId": "{{otherUserId}}",
+  "trainNumber": {{trainNumber}}
+}
+
+> {%
+    if (response.status === 201) client.global.set("rideId", response.body.id);
+%}
+
+### Log a ride on a random train
+POST {{host}}/rides
+Content-Type: application/json
+
+{
+  "userId": "{{userId}}",
+  "trainNumber": {{$random.integer(0, 10000)}}
+}
+
+> {%
+    if (response.status === 201) client.global.set("rideId", response.body.id);
+%}
+
+### Get the last logged ride
+GET {{host}}/rides/{{rideId}}
+
+### ============ Trains ============
+
+### Get a train with its rides and leaderboard
+GET {{host}}/trains/{{trainNumber}}
+
+### Get a train nobody has ridden
+GET {{host}}/trains/1234
+
+### ============ Error cases ============
+
+### Create a user with invalid fields (400)
+POST {{host}}/users
+Content-Type: application/json
+
+{
+  "displayName": "",
+  "email": "not-an-email",
+  "password": "short"
+}
+
+### Create a user with a taken email (409)
+POST {{host}}/users
+Content-Type: application/json
+
+{
+  "displayName": "Bas again",
+  "email": "bas@example.com",
+  "password": "correct horse"
+}
+
+### Log in with a wrong password (401)
+POST {{host}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "bas@example.com",
+  "password": "wrong password"
+}
+
+### Log in without a password (400)
+POST {{host}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "bas@example.com"
+}
+
+### Get an unknown user (404)
+GET {{host}}/users/00000000-0000-0000-0000-000000000000
+
+### Log a ride with invalid fields (400)
+POST {{host}}/rides
+Content-Type: application/json
+
+{
+  "userId": 42,
+  "trainNumber": 12345
+}
+
+### Log a ride for an unknown user (404)
+POST {{host}}/rides
+Content-Type: application/json
+
+{
+  "userId": "00000000-0000-0000-0000-000000000000",
+  "trainNumber": {{trainNumber}}
+}
+
+### Get an unknown ride (404)
+GET {{host}}/rides/00000000-0000-0000-0000-000000000000
+
+### Get an invalid train number (400)
+GET {{host}}/trains/abc

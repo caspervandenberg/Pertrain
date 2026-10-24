@@ -1,3 +1,11 @@
+# All data
+backend/data/*
+
+# IDE settings
+.idea
+
+# ===== FROM TEMPLATE ======
+
 # Logs
 logs
 *.log
